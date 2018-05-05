@@ -1,0 +1,96 @@
+--- !com.amazonaws.mobilehub.v0.Project 
+features:
+  cloudlogic: !com.amazonaws.mobilehub.v0.CloudLogic 
+    components:
+      requestUnicorn: !com.amazonaws.mobilehub.v0.API 
+        attributes:
+          name: requestUnicorn
+          requires-signin: true
+          sdk-generation-stage-name: Development
+        paths:
+          /ride: !com.amazonaws.mobilehub.v0.Function 
+            codeFilename: uploads/requestUnicorn-20180505191202.zip
+            description: 'Handler for calls to resource path : /ride/{proxy+}'
+            enableCORS: true
+            environment: {}
+            handler: lambda.handler
+            hashcode: 7en5N/jd/55uGrM5KDqHwCoDR00a6sTIeB56v2UsHJc=
+            memorySize: '128'
+            modified: '2018-05-05T23:12:59.991+0000'
+            name: requestUnicorn
+            runtime: nodejs6.10
+            timeout: '3'
+            version: NSeHMjdlpcQmwYP6ZjQpnnSSTezncEw6
+          '/ride/{proxy+}': !com.amazonaws.mobilehub.v0.Function 
+            codeFilename: uploads/requestUnicorn-20180505191202.zip
+            description: 'Handler for calls to resource path : /ride/{proxy+}'
+            enableCORS: true
+            environment: {}
+            handler: lambda.handler
+            hashcode: 7en5N/jd/55uGrM5KDqHwCoDR00a6sTIeB56v2UsHJc=
+            memorySize: '128'
+            modified: '2018-05-05T23:12:59.991+0000'
+            name: requestUnicorn
+            runtime: nodejs6.10
+            timeout: '3'
+            version: NFWZoO_Hh2VXzuXevWeKIn0DDmJFpUua
+      sampleCloudApi: !com.amazonaws.mobilehub.v0.API 
+        attributes:
+          name: sampleCloudApi
+          requires-signin: false
+          sdk-generation-stage-name: Development
+        paths:
+          /items: !com.amazonaws.mobilehub.v0.Function 
+            codeFilename: uploads/sampleLambda-20180505191202.zip
+            description: 'Handler for calls to resource path : /items/{proxy+}'
+            enableCORS: true
+            environment: {}
+            handler: lambda.handler
+            hashcode: QxW1TNta8QMFUMdgX7HYEjNCZ3UK9vXNuAxnYqEI4ak=
+            memorySize: '128'
+            modified: '2018-05-05T23:13:00.258+0000'
+            name: sampleLambda
+            runtime: nodejs6.10
+            timeout: '3'
+            version: O.33g6Ikf_LeqzN5UwFxRcTK.0GpgENj
+          '/items/{proxy+}': !com.amazonaws.mobilehub.v0.Function 
+            codeFilename: uploads/sampleLambda-20180505191202.zip
+            description: 'Handler for calls to resource path : /items/{proxy+}'
+            enableCORS: true
+            environment: {}
+            handler: lambda.handler
+            hashcode: QxW1TNta8QMFUMdgX7HYEjNCZ3UK9vXNuAxnYqEI4ak=
+            memorySize: '128'
+            modified: '2018-05-05T23:13:00.258+0000'
+            name: sampleLambda
+            runtime: nodejs6.10
+            timeout: '3'
+            version: 1JkwwjJWmxurNVw5hOZ13hUNzHMKqje_
+  content-delivery: !com.amazonaws.mobilehub.v0.ContentDelivery 
+    attributes:
+      enabled: true
+      visibility: public-global
+    components:
+      release: !com.amazonaws.mobilehub.v0.Bucket {}
+  mobile-analytics: !com.amazonaws.mobilehub.v0.Pinpoint 
+    components:
+      analytics: !com.amazonaws.mobilehub.v0.PinpointAnalytics {}
+  sign-in: !com.amazonaws.mobilehub.v0.SignIn 
+    attributes:
+      enabled: true
+      optional-sign-in: true
+    components:
+      sign-in-user-pools: !com.amazonaws.mobilehub.v0.UserPoolsIdentityProvider 
+        attributes:
+          alias-attributes:
+            - email
+          mfa-configuration: OFF
+          name: userpool
+          password-policy: !com.amazonaws.mobilehub.ConvertibleMap 
+            min-length: '8'
+            require-lower-case: true
+            require-numbers: true
+            require-symbols: true
+            require-upper-case: true
+name: wild-rydes-mobile-no-mfa-2018-05-01-16-09-05
+region: us-east-1

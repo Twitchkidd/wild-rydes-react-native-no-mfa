@@ -12,11 +12,11 @@
  *  express or implied. See the License for the specific language governing
  *  permissions and limitations under the License.
  */
-import React from 'react';
-import DynamicImage from '../components/DynamicImage';
-import { withRouter } from 'react-router-dom';
-
-import '../css/app.css';
+import React from "react";
+import DynamicImage from "../components/DynamicImage";
+import { withRouter } from "react-router-dom";
+import { Auth } from "aws-amplify";
+import "../css/app.css";
 
 /**
  * Sign-in Page
@@ -25,10 +25,8 @@ class SignIn extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      stage: 0,
-      email: '',
-      password: '',
-      code: '',
+      email: "",
+      password: "",
       userObject: null
     };
   }
@@ -45,77 +43,76 @@ class SignIn extends React.Component {
     this.setState({ code: e.target.value });
   }
 
-  onSubmitForm(e) {
+  async onSubmitForm(e) {
     e.preventDefault();
-    console.log('Form Submitted');
-    this.setState({ stage: 1 });
+    try {
+      const userObject = await Auth.signIn(
+        this.state.email.replace(/[@.]/g, "|"),
+        this.state.password
+      );
+      console.log("userObject = ", userObject);
+      this.setState({ userObject, stage: 1 });
+      this.props.history.replace("/app");
+    } catch (err) {
+      alert(err.message);
+      console.error("Auth.signIn(): ", err);
+    }
   }
-
-  onSubmitVerification(e) {
-    e.preventDefault();
-    console.log('Verification Submitted');
-    this.setState({ stage: 0, email: '', password: '', code: '' });
-    // Go back home
-    this.props.history.replace('/');
-  }
+  /*
+      const userObject = await Auth.signIn(
+        this.state.email.replace(/[@.]/g, "|"),
+        this.state.password
+      );
+      console.log("userObject = ", userObject);
+      await Auth.confirmSignIn(this.state.email.replace(/[@.]/g, "|"));
+      console.log("confirm (after await)");
+      this.setState({ email: "", password: "" });
+      this.props.history.replace("/app");
+    } catch (err) {
+      alert(err.m
+      */
 
   isValidEmail(email) {
     var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(String(email).toLowerCase());
   }
 
-  renderSignIn() {
+  render() {
     const isValidEmail = this.isValidEmail(this.state.email);
     const isValidPassword = this.state.password.length > 6;
 
     return (
       <div className="app">
         <header>
-          <DynamicImage src="logo.png"/>
+          <DynamicImage src="logo.png" />
         </header>
         <section className="form-wrap">
           <h1>Sign in</h1>
-          <form id="registrationForm" onSubmit={(e) => this.onSubmitForm(e)}>
-            <input className={isValidEmail?'valid':'invalid'} type="email" placeholder="Email" value={this.state.email} onChange={(e) => this.onEmailChanged(e)}/>
-            <input className={isValidPassword?'valid':'invalid'} type="password" placeholder="Password" value={this.state.password} onChange={(e) => this.onPasswordChanged(e)}/>
-            <input disabled={!(isValidEmail && isValidPassword)} type="submit" value="Let's Ryde"/>
+          <form id="registrationForm" onSubmit={e => this.onSubmitForm(e)}>
+            <input
+              className={isValidEmail ? "valid" : "invalid"}
+              type="email"
+              placeholder="Email"
+              value={this.state.email}
+              onChange={e => this.onEmailChanged(e)}
+            />
+            <input
+              className={isValidPassword ? "valid" : "invalid"}
+              type="password"
+              placeholder="Password"
+              value={this.state.password}
+              onChange={e => this.onPasswordChanged(e)}
+            />
+            <input
+              disabled={!(isValidEmail && isValidPassword)}
+              type="submit"
+              value="Let's Ryde"
+            />
           </form>
         </section>
       </div>
     );
-  }
-
-  renderConfirm() {
-    const isValidEmail = this.isValidEmail(this.state.email);
-    const isValidCode = this.state.code.length === 6;
-
-    return (
-      <div className="app">
-        <header>
-          <DynamicImage src="logo.png"/>
-        </header>
-        <section className="form-wrap">
-          <h1>Enter MFA Code</h1>
-          <form id="verifyForm" onSubmit={(e) => this.onSubmitVerification(e)}>
-            <input className={isValidEmail?'valid':'invalid'} type="email" placeholder="Email" value={this.state.email}/>
-            <input className={isValidCode?'valid':'invalid'} type="text" placeholder="Verification Code" value={this.state.code} onChange={(e) => this.onCodeChanged(e)}/>
-            <input disabled={!(isValidCode&&isValidEmail)} type="submit" value="Verify"/>
-          </form>
-        </section>
-      </div>
-    );
-  }
-
-  render() {
-    switch (this.state.stage) {
-      case 0:
-      default:
-        return this.renderSignIn();
-      case 1:
-        return this.renderConfirm();
-    }
   }
 }
 
 export default withRouter(SignIn);
-
